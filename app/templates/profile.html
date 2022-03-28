@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="card mt-4 border-0">
+                <img src="{{ user.avatar(128) }}" class="card-img-top avatar rounded-circle" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title text-center">{{ user.username.capitalize() }}</h5>
+                  {%if user.about_me %}<p class="card-text text-center">{{ user.about_me }}</p>{% endif %}
+                  <p class="card-text text-center">Last seen: {{ user.last_seen.strftime('%d-%m-%y %H:%S') }}</p>
+                  <p class="card-text text-center">{{ user.followers.count() }} followers, {{ user.followed.count() }} following.</p>
+
+                  {% if user == current_user %}
+                    <div class="d-grid gap-2 col-2 mx-auto">
+                      <a href="{{ url_for('edit_profile') }}" class="btn btn-success btn-edit-profile">Edit profile</a>
+                    </div>
+                    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+                    {% if messages %}
+                
+                    <div class="alert alert-success alert-dismissible fade show col-lg-4 mb-0 mt-3 offset-lg-4 text-center" role="alert">
+                        {% for message in messages %}
+                            <strong> {{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                      
+                        <form action="{{ url_for('create_post') }}" method="post">
+                          <div class="post-container">                
+                              <div class="post-thumb"><img class="rounded-circle" src="{{ user.avatar(36) }}" /></div>
+                              <div class="post-content">
+                                  <div class="form-floating">
+                                      <div class="form-floating">
+                                          <input name="post" type="text" class="form-control border-0 border-bottom border border-2 border-success" id="floatingInput" placeholder="name@example.com">
+                                          <label for="floatingInput">What's on your mind?</label>
+                                      </div>
+                                      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                          <button class="btn btn-secondary btn-sm mt-1" type="submit">Create</button>
+                                          
+                                      </div>
+                                  </div>
+                             </div>
+                          </div>
+                        </form>
+  
+                    </div>
+                    {% if aux %}
+                    <div class="container-posts">
+                        <h3 class=""><strong>Your Posts</strong></h3>
+                        {% for post in posts %}
+                            <div class="post-container">                
+                                <div class="post-thumb-post"><img class="rounded-circle" src="{{ user.avatar(36) }}" /></div>
+                                <div class="post-content">
+                                    <td>{{ post.author.username }} says:<br>{{ post.body }}</td>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="mt-4 mb-4">
+
+                            {% if prev_url %}
+                            
+                            <a class="nav-posts" href="{{ prev_url }}">Newer posts</a>
+                            
+                            {% endif %}
+                            {% if next_url %}
+                            
+                            <a class="nav-posts" href="{{ next_url }}">Older posts</a>
+                            
+                            {% endif %}
+                        </div>
+                    </div>
+                   {% else %}
+                    <div class="container-posts">
+                        <h3 class=""><strong>Posts</strong></h3>
+                        <p class="card-text">Crea un nuevo post</p>
+                    </div>
+                    {% endif %}
+
+                  {% elif not current_user.is_following(user) %}
+                    <p>
+                        <form action="{{ url_for('follow', username=user.username) }}" method="post">
+                            {{ form.hidden_tag() }}
+                            <div class="d-grid gap-2 col-2 mx-auto">
+                                {{ form.submit(value='Follow', class='btn btn-warning') }}
+                              </div>
+                        </form>
+                    </p>
+                    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+                    {% if messages %}
+                    <div class="alert alert-warning alert-dismissible fade show col-lg-4 mb-0 mt-3 offset-lg-4 text-center" role="alert">
+                        {% for message in messages %}
+                            <strong> {{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+                  {% else %}
+                    <p>
+                        <form action="{{ url_for('unfollow', username=user.username) }}" method="post">
+                            {{ form.hidden_tag() }}
+                            <div class="d-grid gap-2 col-2 mx-auto">
+                                {{ form.submit(value='Unfollow', class='btn btn-warning') }}
+                              </div>
+                        </form>
+                    </p>
+                    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+                    {% if messages %}
+                    <div class="alert alert-warning alert-dismissible fade show col-lg-4 mb-0 mt-3 offset-lg-4 text-center" role="alert">
+                        {% for message in messages %}
+                            <strong> {{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+                  {% endif %}
+
+                  
+                  
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <style>
+        .avatar{
+            height: 10rem;
+            width: 10rem;
+            display: block;
+            margin: auto;
+        }
+        .btn-edit-profile{
+            border-radius: 15px;
+        }
+        .post-container { 
+            margin: 20px 20px 0 0;
+            overflow: auto;
+        }
+        .post-thumb {
+            float: left;
+            
+        }
+        .post-thumb img {
+            display: block;
+            margin-top: 16px;
+        }
+        .post-content {
+            margin-left: 50px;
+        }
+        
+        .form-control:focus{
+          box-shadow: none;
+        }
+        .post-thumb-post{
+            float: left;
+        }
+        .post-thumb-post img{
+            display: block;
+            margin-top: 5px;
+        }
+        .container-posts{
+            margin: 20px 0 10px 150px;
+        }
+        .nav-posts{
+            text-decoration: none;
+            color: rgb(10, 88, 45);
+            transition: transform 0.2s ease-in-out;
+            margin: 30px 30px 30px 0;
+        }
+        .nav-posts:hover{
+            color: rgb(80, 80, 80);
+            font-weight: bold;
+        }
+        
+    </style>
+    
+{% endblock %}

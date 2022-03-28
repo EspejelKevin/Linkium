@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="m-5 text-center">Edit profile's {{user.username}}</h1>
+    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 offset-lg-3 offset-md-2">
+        <form method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="row">
+                <div class="col">
+                    <div class="mb-3">
+                        <label for="exampleInputEmail1" class="form-label">Username:</label>
+                        {{ form.username(class="form-control", placeholder="new username") }}
+                        {% for error in form.username.errors %}
+                          <div class="form-text text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="mb-3">
+                        <label for="exampleInputEmail1" class="form-label">Email:</label>
+                        {{ form.email(class="form-control", placeholder="new email") }}
+                        {% for error in form.email.errors %}
+                          <div class="form-text text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="mb-3">
+                        <label for="exampleInputEmail1" class="form-label">About me:</label>
+                        {{ form.about_me(class="form-control about-me", placeholder="what about you?") }}
+                        {% for error in form.about_me.errors %}
+                          <div class="form-text text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="mb-3">
+                        <label for="exampleInputEmail1" class="form-label">New password:</label>
+                        {{ form.password(class="form-control", placeholder="change password") }}
+                        {% for error in form.password.errors %}
+                          <div class="form-text text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="d-grid gap-2">
+                    {{ form.submit(class="btn btn-success btn-update") }}
+                </div>
+                <div class="d-grid gap-2">
+                  <a class="btn btn-secondary mt-2 btn-back" href="{{ url_for('profile', username=current_user.username) }}">Cancel</a>
+                </div>
+            </div>
+
+            
+         
+           
+
+        </form>
+
+    </div>
+    
+    <style>
+        .about-me{
+            resize: none;
+        }
+        .btn-update{
+            border-radius: 15px;
+        }
+        .btn-back{
+            border-radius: 15px;
+        }
+        .form-control{
+            border-radius: 15px;
+        }
+    </style>
+
+{% endblock %}

@@ -1,0 +1,3 @@
+FLASK_APP=microblog.py
+FLASK_ENVIRONMENT=production
+FLASK_DEBUG=False

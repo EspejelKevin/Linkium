@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="col">
+            
+                <img src="{{ current_user.avatar(128) }}" class="mt-2 avatar rounded-circle" alt="...">
+                <div class="text-center m-3 text-success">
+                    <h6>Welcome <strong> {{ current_user.username }}!</strong></h6>
+                </div>
+        
+            <div class="d-grid gap-2 col-4 mx-auto">
+                {% with messages = get_flashed_messages(category_filter=["success"]) %}
+                {% if messages %}
+                <div class="alert alert-warning col-lg-8 mb-0 offset-lg-2 text-center alert-dismissible fade show" role="alert">
+                    {% for message in messages %}
+                    <strong> {{ message }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+                <h6 class="mt-4">Create a new post!</h6>
+                <form action="" method="post">
+                    {{ form.hidden_tag() }}
+                    <div class="form-floating mb-3">
+                        {{ form.title(class='form-control border-0 border-bottom border border-2 border-success', placeholder='type a title') }}
+                        <label for="floatingInput">Title</label>
+                    </div>
+                    <div class="form-floating">
+                        {{ form.body(class='form-control border-0 border-bottom border border-2 border-success', placeholder='type a title', style='resize:none;') }}
+                        <label for="floatingPassword">Say something!</label>
+                    </div>
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                        {{ form.submit(class='btn btn-success btn-create') }}
+                      </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 offset-lg-2">
+            <h4>What's new?</h4>
+            {% for post in posts %}
+                <div class="post-container">                
+                    <div class="post-thumb-post"><img class="rounded-circle" src="{{ post.author.avatar(36) }}" /></div>
+                    <div class="post-content">
+                        <td><a class="nav-profile" href="{{ url_for('profile', username=post.author.username) }}">
+                            {{ post.author.username }}</a> says:<br>{{ post.body }}</td>
+                    </div>
+                </div>
+            {% endfor %}      
+            <div class="mt-4 mb-4">
+
+                {% if prev_url %}
+                
+                <a class="nav-posts" href="{{ prev_url }}">Newer posts</a>
+                
+                {% endif %}
+                {% if next_url %}
+                
+                <a class="nav-posts" href="{{ next_url }}">Older posts</a>
+                
+                {% endif %}
+            </div> 
+        </div>
+    </div>
+
+    <style>
+         .avatar{
+            height: 10rem;
+            width: 10rem;
+            display: block;
+            margin: auto;
+        }
+        .form-control:focus{
+          box-shadow: none;
+        }
+        .btn-create{
+            margin: 1rem;
+            border-radius: 10px;
+        }
+        .post-container { 
+            margin: 20px 20px 0 0;
+            overflow: auto;
+        }
+        .post-thumb-post{
+            float: left;
+        }
+        .post-thumb-post img{
+            display: block;
+            margin-top: 5px;
+        }
+        .post-content {
+            margin-left: 50px;
+        }
+        .nav-profile{
+            text-decoration: none;
+            color: rgb(10, 88, 45);
+            text-transform: capitalize;
+            transition: transform 0.2s ease-in-out;
+        }
+        .nav-profile:hover{
+            color: rgb(80, 80, 80);
+            font-weight: bold;
+            
+        }
+        .nav-posts{
+            text-decoration: none;
+            color: rgb(10, 88, 45);
+            transition: transform 0.2s ease-in-out;
+            margin: 30px 30px 30px 0;
+        }
+        .nav-posts:hover{
+            color: rgb(80, 80, 80);
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
